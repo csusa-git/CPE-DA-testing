@@ -1,0 +1,64 @@
+======================================================================
+CPE PRIORITY DESTINATION ANALYSIS — MARCH 2026
+Generated: 2026-04-19 18:02:06
+======================================================================
+
+SUMMARY
+----------------------------------------
+  Total tickets analyzed:          10,673
+  Went to Priority 1 (Query 1):    9,799
+  Non-Priority-1, mileage missing: 874  (Query 2 — actionable)
+
+QUERY 2 — TOP DESTINATIONS WITHOUT MILEAGE
+----------------------------------------
+    141  ARNETT LANES 1-4
+     72  TROJAN STATION
+     66  CP TROJAN 2 - NGL
+     60  CP - PERRYTON 4
+     49  CP TROJAN 3 - ETC
+     44  CP - HOOKER
+     42  CP - CLAWSON 3
+     39  CP - PIPER 4
+     27  ARNETT STATION LANE 7
+     26  ARNETT STATION LANE 5
+     24  CP - PERRYTON 1
+     22  ARNETT STATIONS LANES 1-4
+     20  ARNETT STATION (NAVI)
+     20  ARNETT STATION LANE 6
+     19  CP - PERRYTON 2
+     18  CP - CLAWSON 1
+     15  RED STAG STATION
+     15  NAV CALUMET STATION
+     15  CP - PIPER 3
+     14  CP - CLAWSON 2
+
+QUERY 2 — TOP LEASES WITHOUT MILEAGE
+----------------------------------------
+    105  AMBA1931      AMBASSADOR INN 19/31 DM #1H
+     63  MON18192      MONTGOMERY 18/19 DM 2H
+     54  KLEIN031      KLEIN 3 BO #1H
+     42  WATER718      WATERLOO 7 18 15N-23W 1H
+     36  SNEE0001      SNEED PLANT
+     15  SOLO0018      SOLO 1-8H
+     13  HEMP0003      HEMPHILL PLANT (SUPERIOR)
+     11  513730        MILLER FIELDER CTB
+     11  BERR0074      BERRYMAN CTB
+      9  513507        MILLER 6 CTB
+      8  DUMA0001      DUMAS SWD
+      8  JIMM1121      JIMMY LYN 11/2 PA 1H
+      8  DUGO1236      DUGOUT CREEK 12/36 MJ FEE 2H
+      8  GRAY0005      GRAYCON
+      8  REBE1423      REBECCA 14/23 AP 1H
+      6  HUTC0001      HUTCHCON
+      5  OSPR1015      OSPREY 1-10-15H
+      5  TWOM0224      TWOMBLY 2-24 (SMU)
+      4  HATC0014      HATCHER 1-4
+      4  KANS0001      KANSAS CITY LIFE 2, 3 & 5
+
+OUTPUT FILES
+----------------------------------------
+  Query 1 CSV:  output/CS-CC-query1_priority1_correct_20260419_180204.csv
+  Query 2 CSV:  output/CS-CC-query2_not_priority1_20260419_180204.csv
+  This report:  output/CS-CC-analysis_report_20260419_180204.txt
+
+======================================================================
