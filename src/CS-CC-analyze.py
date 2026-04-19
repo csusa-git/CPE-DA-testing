@@ -258,7 +258,7 @@ def resolve_mileage(ticket, pdata, actual_dest_norm):
 
 def build_results(export_df, priority_map):
     query1_rows = []
-    query2_rows = []
+    query2_rows = []  # non-priority-1 loads missing mileage (actionable)
 
     for _, ticket in export_df.iterrows():
         lease_key  = norm(ticket.get('lease_number', ''))
@@ -278,14 +278,13 @@ def build_results(export_df, priority_map):
 
         if lease_key not in priority_map:
             mileage, mil_src, _ = resolve_mileage(ticket, None, actual_dst)
-            query2_rows.append({
-                **base,
-                'Priority Source':    'NOT ON LIST',
-                'Priority 1 Station': '',
-                'Mileage':            mileage,
-                'Mileage Source':     mil_src,
-                'Notes':              'Lease not found on CP or VLO priority list',
-            })
+            if not mileage:
+                query2_rows.append({
+                    **base,
+                    'Priority Source':    'NOT ON LIST',
+                    'Priority 1 Station': '',
+                    'Notes':              'Lease not found on CP or VLO priority list',
+                })
             continue
 
         pdata      = priority_map[lease_key]
@@ -300,14 +299,13 @@ def build_results(export_df, priority_map):
             })
         else:
             mileage, mil_src, notes = resolve_mileage(ticket, pdata, actual_dst)
-            query2_rows.append({
-                **base,
-                'Priority Source':    pdata['source'],
-                'Priority 1 Station': p1_station.title(),
-                'Mileage':            mileage,
-                'Mileage Source':     mil_src,
-                'Notes':              notes,
-            })
+            if not mileage:
+                query2_rows.append({
+                    **base,
+                    'Priority Source':    pdata['source'],
+                    'Priority 1 Station': p1_station.title(),
+                    'Notes':              notes,
+                })
 
     return pd.DataFrame(query1_rows), pd.DataFrame(query2_rows)
 
@@ -328,30 +326,18 @@ def write_report(q1, q2):
     lines.append('SUMMARY')
     lines.append('-' * 40)
     lines.append(f'  Total tickets analyzed:          {total:,}')
-    lines.append(f'  Went to Priority 1 (Query 1):    {len(q1):,}  ({len(q1)/total*100:.1f}%)')
-    lines.append(f'  Did NOT go to Priority 1 (Q2):   {len(q2):,}  ({len(q2)/total*100:.1f}%)')
+    lines.append(f'  Went to Priority 1 (Query 1):    {len(q1):,}')
+    lines.append(f'  Non-Priority-1, mileage missing: {len(q2):,}  (Query 2 — actionable)')
     lines.append('')
 
     if not q2.empty:
-        lines.append('QUERY 2 BREAKDOWN — Non-Priority-1 Reasons')
-        lines.append('-' * 40)
-        for note, cnt in q2['Notes'].value_counts().items():
-            lines.append(f'  {cnt:5,}  {note}')
-        lines.append('')
-
-        lines.append('QUERY 2 — MILEAGE AVAILABILITY')
-        lines.append('-' * 40)
-        for src, cnt in q2['Mileage Source'].value_counts().items():
-            lines.append(f'  {cnt:5,}  {src}')
-        lines.append('')
-
-        lines.append('QUERY 2 — TOP ACTUAL DESTINATIONS (non-Priority-1)')
+        lines.append('QUERY 2 — TOP DESTINATIONS WITHOUT MILEAGE')
         lines.append('-' * 40)
         for dest, cnt in q2['Actual Destination'].value_counts().head(20).items():
             lines.append(f'  {cnt:5,}  {dest}')
         lines.append('')
 
-        lines.append('QUERY 2 — TOP LEASES WITH EXCEPTIONS')
+        lines.append('QUERY 2 — TOP LEASES WITHOUT MILEAGE')
         lines.append('-' * 40)
         top = q2.groupby(['Lease Number', 'Lease Name']).size().sort_values(ascending=False).head(20)
         for (num, name), cnt in top.items():
