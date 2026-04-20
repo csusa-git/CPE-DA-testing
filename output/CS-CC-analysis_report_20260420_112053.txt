@@ -1,0 +1,66 @@
+======================================================================
+CPE PRIORITY DESTINATION ANALYSIS — MARCH 2026
+Generated: 2026-04-20 11:20:54
+======================================================================
+
+SUMMARY
+----------------------------------------
+  Total tickets analyzed:          11,684
+  Went to Priority 1 (Query 1):    9,799
+  Did NOT go to Priority 1 (Query 2):         1,885
+  On-list, wrong destination (Query 3):       383
+
+QUERY 2 — TOP DESTINATIONS WITHOUT MILEAGE
+----------------------------------------
+    230  ARNETT LANES 1-4
+    178  HWY 81 STATION
+    112  CHISHOLM STATION
+    105  NAV CALUMET STATION
+     90  CP - HOOKER
+     81  NAVIGATOR OMEGA CDP
+     79  TROJAN STATION
+     75  NAVIGATOR TUTTLE TERMINAL
+     66  CP TROJAN 2 - NGL
+     60  CP - PERRYTON 4
+     51  CP TROJAN 3 - ETC
+     50  CP - WASSON STATION
+     49  RED STAG STATION
+     43  CP - CLAWSON 3
+     39  CP - PIPER 4
+     38  CP - MERTEN NORTH
+     33  OMEGA 6 LACT
+     33  ARNETT STATION LANE 5
+     32  ARNETT STATIONS LANES 1-4
+     31  ARNETT STATION LANE 7
+
+QUERY 2 — TOP LEASES WITHOUT MILEAGE
+----------------------------------------
+    105  AMBA1931      AMBASSADOR INN 19/31 DM #1H
+     85  MON18192      MONTGOMERY 18/19 DM 2H
+     60  WATER718      WATERLOO 7 18 15N-23W 1H
+     57  KLEIN031      KLEIN 3 BO #1H
+     38  SOLO0018      SOLO 1-8H
+     36  SNEE0001      SNEED PLANT
+     33  2055          GRELLNER 1 2 CDP
+     22  RUBY0005      RUBY
+     22  HORN92HX      HORNET 9_16-14N-12W 2HX-4HX
+     21  2079          JANICE 2 3 CDP
+     19  REBE1423      REBECCA 14/23 AP 1H
+     18  WMJACK01      WM JACKSON
+     17  BERR0074      BERRYMAN CTB
+     16  LIBE0002      LIBERAL RBO
+     15  2003          ALTA BIA 2 3 4 5 CDP
+     14  513730        MILLER FIELDER CTB
+     14  DUGO1236      DUGOUT CREEK 12/36 MJ FEE 2H
+     14  513507        MILLER 6 CTB
+     13  HEMP0003      HEMPHILL PLANT (SUPERIOR)
+     13  JIMM1121      JIMMY LYN 11/2 PA 1H
+
+OUTPUT FILES
+----------------------------------------
+  Query 1 CSV:  output/CS-CC-query1_priority1_correct_20260420_112053.csv
+  Query 2 CSV:  output/CS-CC-query2_not_priority1_20260420_112053.csv
+  Query 3 CSV:  output/CS-CC-query3_priority1_wrong_destination_20260420_112053.csv
+  This report:  output/CS-CC-analysis_report_20260420_112053.txt
+
+======================================================================

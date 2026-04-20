@@ -258,7 +258,7 @@ def resolve_mileage(ticket, pdata, actual_dest_norm):
 
 def build_results(export_df, priority_map):
     query1_rows = []
-    query2_rows = []  # non-priority-1 loads missing mileage (actionable)
+    query2_rows = []  # all loads that did NOT go to their Priority 1 station
 
     for _, ticket in export_df.iterrows():
         lease_key  = norm(ticket.get('lease_number', ''))
@@ -278,13 +278,14 @@ def build_results(export_df, priority_map):
 
         if lease_key not in priority_map:
             mileage, mil_src, _ = resolve_mileage(ticket, None, actual_dst)
-            if not mileage:
-                query2_rows.append({
-                    **base,
-                    'Priority Source':    'NOT ON LIST',
-                    'Priority 1 Station': '',
-                    'Notes':              'Lease not found on CP or VLO priority list',
-                })
+            query2_rows.append({
+                **base,
+                'Priority Source':    'NOT ON ANY PRIORITY LIST',
+                'Priority 1 Station': '',
+                'Mileage':            mileage,
+                'Mileage Source':     mil_src,
+                'Notes':              'Lease not found on CP or VLO priority list',
+            })
             continue
 
         pdata      = priority_map[lease_key]
@@ -299,22 +300,25 @@ def build_results(export_df, priority_map):
             })
         else:
             mileage, mil_src, notes = resolve_mileage(ticket, pdata, actual_dst)
-            if not mileage:
-                query2_rows.append({
-                    **base,
-                    'Priority Source':    pdata['source'],
-                    'Priority 1 Station': p1_station.title(),
-                    'Notes':              notes,
-                })
+            query2_rows.append({
+                **base,
+                'Priority Source':    pdata['source'],
+                'Priority 1 Station': p1_station.title(),
+                'Mileage':            mileage,
+                'Mileage Source':     mil_src,
+                'Notes':              notes,
+            })
 
-    return pd.DataFrame(query1_rows), pd.DataFrame(query2_rows)
+    q2 = pd.DataFrame(query2_rows)
+    q3 = q2[q2['Priority Source'] != 'NOT ON ANY PRIORITY LIST'].reset_index(drop=True) if not q2.empty else pd.DataFrame()
+    return pd.DataFrame(query1_rows), q2, q3
 
 
 # ---------------------------------------------------------------------------
 # Report
 # ---------------------------------------------------------------------------
 
-def write_report(q1, q2):
+def write_report(q1, q2, q3):
     lines = []
     lines.append('=' * 70)
     lines.append('CPE PRIORITY DESTINATION ANALYSIS — MARCH 2026')
@@ -327,7 +331,8 @@ def write_report(q1, q2):
     lines.append('-' * 40)
     lines.append(f'  Total tickets analyzed:          {total:,}')
     lines.append(f'  Went to Priority 1 (Query 1):    {len(q1):,}')
-    lines.append(f'  Non-Priority-1, mileage missing: {len(q2):,}  (Query 2 — actionable)')
+    lines.append(f'  Did NOT go to Priority 1 (Query 2):         {len(q2):,}')
+    lines.append(f'  On-list, wrong destination (Query 3):       {len(q3):,}')
     lines.append('')
 
     if not q2.empty:
@@ -348,6 +353,7 @@ def write_report(q1, q2):
     lines.append('-' * 40)
     lines.append(f'  Query 1 CSV:  output/CS-CC-query1_priority1_correct_{TIMESTAMP}.csv')
     lines.append(f'  Query 2 CSV:  output/CS-CC-query2_not_priority1_{TIMESTAMP}.csv')
+    lines.append(f'  Query 3 CSV:  output/CS-CC-query3_priority1_wrong_destination_{TIMESTAMP}.csv')
     lines.append(f'  This report:  output/CS-CC-analysis_report_{TIMESTAMP}.txt')
     lines.append('')
     lines.append('=' * 70)
@@ -373,16 +379,19 @@ def main():
     print(f'  {len(export_df):,} tickets loaded')
 
     print('Running queries...')
-    q1, q2 = build_results(export_df, priority_map)
+    q1, q2, q3 = build_results(export_df, priority_map)
 
     q1_path = os.path.join(OUT_DIR, f'CS-CC-query1_priority1_correct_{TIMESTAMP}.csv')
     q2_path = os.path.join(OUT_DIR, f'CS-CC-query2_not_priority1_{TIMESTAMP}.csv')
+    q3_path = os.path.join(OUT_DIR, f'CS-CC-query3_priority1_wrong_destination_{TIMESTAMP}.csv')
     q1.to_csv(q1_path, index=False)
     q2.to_csv(q2_path, index=False)
+    q3.to_csv(q3_path, index=False)
     print(f'  Query 1: {len(q1):,} rows -> {q1_path}')
     print(f'  Query 2: {len(q2):,} rows -> {q2_path}')
+    print(f'  Query 3: {len(q3):,} rows -> {q3_path}')
 
-    write_report(q1, q2)
+    write_report(q1, q2, q3)
 
 
 if __name__ == '__main__':
